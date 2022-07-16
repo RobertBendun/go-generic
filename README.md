@@ -1,8 +1,19 @@
-# Go Generic lib for generic iteration
+# Go Generic - generic iteration library
 
-Iterate, modify and transform structs, arrays and maps in generic way in Go!
+Iterate, modify and transform structs, arrays and maps in generic way in Go, with type of function determining which fields can be accessed.
+
+For functions used for iteration `func(arg T)`:
+
+- when `T` is a __concrete type__ like `int`, `[]float`, `struct {}` function is beeing called only when type of field is convertible to `T`,
+- when `T` is an __interface__ then function is beeing called only for those values (fields, elements) that implements that interface.
+
+Rules above means that generic iteration function, that will traverse all struct fields or map and slice values is `func(value interface{})`
+
+Situation is the same for `func(key K, val V)`, for `K` beeing convertible from or implementing `string` for structs, `int` for slices and `T` for `map[T]_` 
 
 ## Example
+
+For more examples see [example](example/) directory.
 
 ```go
 type Person struct {
@@ -20,9 +31,9 @@ func (lhs Person) Equal(rhs Person) bool {
 
 func main() {
 	unixTeam := []Person{
-		{FirstName: "Ken", LastName: "Thompson"},
+		{FirstName: "Ken",    LastName: "Thompson"},
 		{FirstName: "Dennis", LastName: "Ritchie"},
-		{FirstName: "Brian", LastName: "Kernighan"},
+		{FirstName: "Brian",  LastName: "Kernighan"},
 	}
 
 	// Set all colleagues of person to people in unixTeam except that person
@@ -35,7 +46,7 @@ func main() {
 	})
 
 	generic.Each(unixTeam, func(person Person) {
-		// Get person with
+		// Make person first and last name uppercase for nice heading
 		person = generic.Map(person, strings.ToUpper)
 
 		fmt.Printf("%s %s\n", person.FirstName, person.LastName)
@@ -61,4 +72,6 @@ BRIAN KERNIGHAN
   knows Dennis Ritchie
 ```
 
-This library is inspired by Haskell [`Data.Data`](https://hackage.haskell.org/package/base-4.16.2.0/docs/Data-Data.html) and [`Data.Generics`](https://hackage.haskell.org/package/syb-0.7.2.1/docs/Data-Generics.html). See [this video](https://www.youtube.com/watch?v=Zj8KXD9MRA0) for short introduction. It was created to play with this idea in other language.
+## See also
+
+This library is inspired by Haskell [`Data.Data`](https://hackage.haskell.org/package/base-4.16.2.0/docs/Data-Data.html) and [`Data.Generics`](https://hackage.haskell.org/package/syb-0.7.2.1/docs/Data-Generics.html). See [this video](https://www.youtube.com/watch?v=Zj8KXD9MRA0) for short introduction.
